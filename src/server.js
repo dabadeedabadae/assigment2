@@ -1,22 +1,29 @@
-import express from "express";
-import cors from "cors";
-import pkg from "@prisma/client";
+const express = require("express");
 
-
-process.env.DATABASE_URL ??= "postgresql://postgres:postgres@localhost:5432/postgres";
-
+const customerRoutes = require("./routes/customers");
+const employeeRoutes = require("./routes/employees");
+const productRoutes = require("./routes/products");
+const orderRoutes = require("./routes/orders");
+const path = require("path")
 const app = express();
-const { PrismaClient } = pkg;
-const prisma = new PrismaClient();
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(express.json());
 
-// Test route
-app.get("/", (req, res) => {
-  res.json({ message: "E-Commerce API is running" });
+app.use("/api/customers", customerRoutes);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+app.get("/", (req,res) => {
+    res.send("Come on over and do the twist, uh-huh")
 });
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+app.get("/api/health", (req, res) => {
+    res.json({ status: "Winner winner chicken dinner"});
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
